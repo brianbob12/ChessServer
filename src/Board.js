@@ -30,9 +30,10 @@ class Board {
     this.idLookup={}//a dictionary of peiceIDs to peice objects
 
     //setupTeams
+    console.log("Setting up board")
     this.setUpSide("A",true)
     this.setUpSide("B",false)
-    console.log(this.getPossibleMovesPerPiece("BN1"))
+
   }
 
   //to be used privatly

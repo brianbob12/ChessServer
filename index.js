@@ -15,8 +15,9 @@ app.use(bodyParser.urlencoded({extended:true}));
 let board= new Board()
 
 //render home page
-app.get("/",function(req,res) {
-  res.render("home");
+app.get("/getboard",function(req,res) {
+  res.json(board.layout)
+  res.end()
 });
 
 
