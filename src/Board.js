@@ -1,11 +1,11 @@
-//the board is made up of peices. Each peice has an id and class
+//the board is made up of pieces. Each piece has an id and class
 
 //There are two sides, A and B
 //NOTE A starts at a low Y vale and B starts at a high Y value
-//peice IDs starting with A belong to player A
+//piece IDs starting with A belong to player A
 
-//import Peice
-const Peice = require('./Piece.js')
+//import piece
+const Piece = require('./Piece.js')
 
 class Board {
   //sets up chess board as usual.
@@ -27,7 +27,7 @@ class Board {
 
     this.allPieces=[]//list of all piece IDs
 
-    this.idLookup={}//a dictionary of peiceIDs to peice objects
+    this.idLookup={}//a dictionary of pieceIDs to piece objects
 
     //setupTeams
 
@@ -53,9 +53,9 @@ class Board {
 
     //start with pawns
     for(var x=0;x<8;x++){
-      //create new peice
+      //create new piece
       id=letter+"P"+x.toString()
-      p=new Peice(letter,id,5,x,pawnY)
+      p=new Piece(letter,id,5,x,pawnY)
 
       //add to globals
       this.allPieces.push(id)
@@ -65,14 +65,14 @@ class Board {
 
     //add rooks
     id=letter+"R0"
-    p=new Peice(letter,id,4,0,pieceY)
+    p=new Piece(letter,id,4,0,pieceY)
     //add to globals
     this.allPieces.push(id)
     this.idLookup[id]=p
     this.layout["0"+pieceY.toString()]=id
 
     id=letter+"R1"
-    p=new Peice(letter,id,4,7,pieceY)
+    p=new Piece(letter,id,4,7,pieceY)
     //add to globals
     this.allPieces.push(id)
     this.idLookup[id]=p
@@ -80,14 +80,14 @@ class Board {
 
     //add knights
     id=letter+"N0"
-    p=new Peice(letter,id,3,1,pieceY)
+    p=new Piece(letter,id,3,1,pieceY)
     //add to globals
     this.allPieces.push(id)
     this.idLookup[id]=p
     this.layout["1"+pieceY.toString()]=id
 
     id=letter+"N1"
-    p=new Peice(letter,id,3,6,pieceY)
+    p=new Piece(letter,id,3,6,pieceY)
     //add to globals
     this.allPieces.push(id)
     this.idLookup[id]=p
@@ -95,14 +95,14 @@ class Board {
 
     //add bishops
     id=letter+"B0"
-    p=new Peice(letter,id,2,2,pieceY)
+    p=new Piece(letter,id,2,2,pieceY)
     //add to globals
     this.allPieces.push(id)
     this.idLookup[id]=p
     this.layout["2"+pieceY.toString()]=id
 
     id=letter+"B1"
-    p=new Peice(letter,id,2,5,pieceY)
+    p=new Piece(letter,id,2,5,pieceY)
     //add to globals
     this.allPieces.push(id)
     this.idLookup[id]=p
@@ -110,7 +110,7 @@ class Board {
 
     //add queen
     id=letter+"Q0"
-    p=new Peice(letter,id,1,3,pieceY)
+    p=new Piece(letter,id,1,3,pieceY)
     //add to globals
     this.allPieces.push(id)
     this.idLookup[id]=p
@@ -118,7 +118,7 @@ class Board {
 
     //add king
     id=letter+"K0"
-    p=new Peice(letter,id,0,4,pieceY)
+    p=new Piece(letter,id,0,4,pieceY)
     //add to globals
     this.allPieces.push(id)
     this.idLookup[id]=p
@@ -143,7 +143,7 @@ class Board {
   }
 
   //gets all possible moves of a piece
-  getPossibleMovesPerPiece(id){
+  getPossibleMovesByPiece(id){
     var myPiece=this.idLookup[id]
     var type=myPiece.type
     var direction=1//the forward direction for pawns
@@ -299,15 +299,32 @@ class Board {
     return possibleMoves
   }
 
+  //returns all possible moves by side
+  //side is char "A" or "B"
+  //possible moves are in the form [[id,newpos(as string)],...]
+  getPossibleMovesBySide(side){
+    let output=[]
+    let temp=[]
+    //iterate over all pieces
+    for(var i=0;i<this.allPieces.length;i++){
+      id=this.allPieces[i]
+      if(this.idLookup[id].side==side){
+        temp=getPossibleMovesByPiece(id)
+        for(var i=0;i<temp.length;i++){
+          output.push([id,temp[i][0].toString()+temp[i][1].toString()])
+        }
+      }
+    }
+  }
 
-  //takes a peice ID and a new position
+  //takes a piece ID and a new position
   //returns true if move is legal
   //newPos is given as a two digit string
   checkMove(id,newPos){
     let posX=newPos[0]-0
     let posY=newPos[1]-0
-    //it is fastest to just find all possible moves for the peice
-    let possibleMoves=this.getPossibleMovesPerPiece(id)
+    //it is fastest to just find all possible moves for the piece
+    let possibleMoves=this.getPossibleMovesByPiece(id)
     for(let i=0;i<possibleMoves.length;i++){
       if(possibleMoves[i][0]==posX&&possibleMoves[i][1]==posY){
         return true//this will end function
@@ -317,7 +334,7 @@ class Board {
     return false
   }
 
-  //takes a peice ID and a new position
+  //takes a piece ID and a new position
   //returns true if move is legal
   //newPos is given as a two digit string
   //if legel the move is made
@@ -332,8 +349,8 @@ class Board {
     //legal move
     //check if it is castleing
     if(this.idLookup[id].type==0){//if king
-      let peice=this.idLookup[id]
-      if(!peice.moved&&newPos[0]=="6"){//if the rook has moved checkMove would have cought it
+      let piece=this.idLookup[id]
+      if(!piece.moved&&newPos[0]=="6"){//if the rook has moved checkMove would have cought it
         //castleing confirmed
         //move king to correct place
         this.layout[newPos]=id
@@ -387,13 +404,69 @@ class Board {
         newB.layout[i.toString()+b.toString()]=this.layout[i.toString()+b.toString()]
       }
     }
-    //for every peice object create a deep copy
+    //for every piece object create a deep copy
     let id=""
     for(var i=0;i<newB.allPieces.length;i++){
       id=newB.allPieces[i]
       newB.idLookup[id]=this.idLookup[id].copy()
     }
     return newB
+  }
+
+  //returns true if side is in check
+  inCheck(side){
+    //find king
+    for(var i=0;i<this.allPieces.length;i++){
+      if(this.idLookup[this.allPieces[i]].side==side){
+        if(this.idLookup[this.allPieces[i]].type==0){
+          //found him
+          let king=this.allPieces[i]
+          break
+        }
+      }
+    }
+    //get the king's hiding location
+    let kingPos=""
+    kingPos+=king.posX
+    kingPos+=king.posY
+
+    //
+    var enemy="B"
+    if(side=="B"){
+      enemy=="A"
+    }
+    let temp=this.getPossibleMovesBySide(enemy)
+    for(var i=0;i<temp.length;i++){
+      if(temp[i][1]==kingPos){
+        return true
+        //this is if a valid enemy move can take the king
+      }
+    }
+    //if we get here there are no valid enemy moves that can take the king
+    return false
+  }
+
+  //returns true if side is in checkmate
+  inCheckMate(side){
+    if(!this.inCheck(side)){//checking already in check
+      return false
+    }
+    //we now have to check every possible move for side
+    let options=this.getPossibleMovesBySide(side)
+    let newBoard=Board()
+    for(var i=0;i<options.length;i++){
+      //for every option
+      //make a copy of the board
+      newBoard=this.copy()
+      //make the move
+      newBoard.makeMove(options[i][0],options[i][1])
+      //check check
+      if(!newBoard.isCheck(side)){
+        return false
+      }
+    }
+    //if we get here then unfrounatly it is checkmate
+    return true
   }
 }
 
