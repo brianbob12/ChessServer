@@ -25,6 +25,19 @@ class Peice{
     this.hasMoved=false//used for pawns and knings
     this.dead=false//used for counting points
   }
+
+  //produces a deepcopy of itself
+  copy(){
+    let newB=Peice()
+    newB.side=this.side
+    newB.id=this.id
+    newB.type=this.type
+    newB.posX=this.posX
+    newB.posY=this.posY
+    newB.hasMoved=this.hasMoved
+    newB.dead=this.dead
+    return newB
+  }
 }
 
 module.exports = Peice

@@ -377,6 +377,24 @@ class Board {
     this.idLookup[id].hasMoved=true
     return true
   }
+
+  //returns a full deep copy of this
+  copy(){
+    let newB=Board()
+    //copy layout
+    for(var i=0;i<7;i++){
+      for(var j=0;j<7;j++){
+        newB.layout[i.toString()+b.toString()]=this.layout[i.toString()+b.toString()]
+      }
+    }
+    //for every peice object create a deep copy
+    let id=""
+    for(var i=0;i<newB.allPieces.length;i++){
+      id=newB.allPieces[i]
+      newB.idLookup[id]=this.idLookup[id].copy()
+    }
+    return newB
+  }
 }
 
 module.exports = Board
