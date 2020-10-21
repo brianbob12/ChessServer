@@ -256,6 +256,26 @@ class Board {
           possibleMoves.push([stepX,stepY])
         }
       }
+
+      //castleing
+      //castleing is represented by the king moveing to 6[yVal]
+      if!(myPiece.hasMoved){
+        //hard coding for each side
+        var yVal="0"
+        if(myPiece.side=="B"){//high Y value
+          yVal="7"
+        }
+        if(this.this.layout["7"+yVal]!=""){
+          //check that the rook is GTG
+          let rook=this.idLookup[this.layout["7"+yVal]]
+          if(rook.type==4&&!rook.moved){//if it has not moved it must be of the same side
+            //check if the necissary squares are free
+            if(this.idLookup["5"+yVal]==""&&this.idLookup["6"+yVal]){
+              possibleMoves.push([6,yVal])
+            }
+          }
+        }
+      }
     }
     return possibleMoves
   }
