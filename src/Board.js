@@ -284,6 +284,60 @@ class Board {
   getPossibleMovesPerSide(side){
     //iterate over peiceIDs
   }
+  //takes a peice ID and a new position
+  //returns true if move is legal
+  //newPos is given as a two digit string
+  checkMove(id,newPos){
+    let posX=newPos[0]-0
+    let posY=newPos[1]-0
+    //it is fastest to just find all possible moves for the peice
+    possibleMoves=getPossibleMovesPerPiece()
+    for(move in possibleMoves){
+      if(move[0]==posX&&move[1]==posY){
+        return true//this will end function
+      }
+    }
+    //if we get here without reutrning the move is not in the list
+    return false
+  }
+
+  //takes a peice ID and a new position
+  //returns true if move is legal
+  //newPos is given as a two digit string
+  //if legel the move is made
+  makeMove(id,newPos){
+    if(!this.checkMove(id,newPos)){
+      return false//illegal move
+    }
+    //legal move
+    //check if it is castleing
+    if(this.idLookup[id].type==0){//if king
+      let peice=this.idLookup[id]
+      if(!peice.moved&&newPos[0]=="6"){
+        //castleing confirmed
+        //TODO deal with that
+
+        return true//returning here
+      }
+    }
+    //this will only run if not castleing
+    //check if destination is occupied by the enemy
+    if(this.idLookup[this.layout[newPos]].side!=this.idLookup[id].side){
+      //taking enemy
+      //make enemy dead
+      this.idLookup[this.layout[newPos]].dead=true
+    }
+    // now empy the source pos
+    let oldPos=this.idLookup[id].posX.toString()//as string
+    oldPos+=this.idLookup[id].posY.toString()
+    this.layout[oldPos]=""//empty
+    //set newPos to id
+    this.layout[newPos]=id
+    //set object position
+    this.idLookup[id].posX=newPos[0]-0
+    this.idLookup[id].posY=newPos[1]-0
+    return true
+  }
 }
 
 module.exports = Board

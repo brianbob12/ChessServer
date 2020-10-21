@@ -23,6 +23,7 @@ class Peice{
     this.posX=posX
     this.posY=posY
     this.hasMoved=false//used for pawns and knings
+    this.dead=false//used for counting points
   }
 }
 
