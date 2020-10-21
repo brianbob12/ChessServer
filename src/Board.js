@@ -259,7 +259,7 @@ class Board {
 
       //castleing
       //castleing is represented by the king moveing to 6[yVal]
-      if!(myPiece.hasMoved){
+      if(!myPiece.hasMoved){
         //hard coding for each side
         var yVal="0"
         if(myPiece.side=="B"){//high Y value
@@ -291,9 +291,9 @@ class Board {
     let posX=newPos[0]-0
     let posY=newPos[1]-0
     //it is fastest to just find all possible moves for the peice
-    possibleMoves=getPossibleMovesPerPiece()
-    for(move in possibleMoves){
-      if(move[0]==posX&&move[1]==posY){
+    let possibleMoves=this.getPossibleMovesPerPiece(id)
+    for(let i=0;i<possibleMoves.length;i++){
+      if(possibleMoves[i][0]==posX&&possibleMoves[i][1]==posY){
         return true//this will end function
       }
     }
