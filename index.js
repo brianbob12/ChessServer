@@ -54,7 +54,7 @@ app.get("/makeMove",function(req,res){
     let out=board.makeMove(req.query.id,req.query.newpos)
     //// TODO: log move
     if(!out){
-      console.log("attemtp to make illegal move")
+      console.log("attempt to make illegal move")
     }
     res.write(out.toString())
     res.end()

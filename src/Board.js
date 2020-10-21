@@ -30,7 +30,7 @@ class Board {
     this.idLookup={}//a dictionary of peiceIDs to peice objects
 
     //setupTeams
-    console.log("Setting up board")
+
     this.setUpSide("A",true)
     this.setUpSide("B",false)
 
@@ -165,6 +165,25 @@ class Board {
           }
         }
       }
+      //check if it can move along corners
+      let protoPosX1=myPiece.posX+1
+      let protoPosX2=myPiece.posX-1
+      let protoPosY=myPiece.posY+1
+      let adverseSide="B"
+      if(myPiece.side=="B"){
+        protoPosY=myPiece.posY-1
+        adverseSide="A"
+      }
+      //check each protoPos1
+      if(this.occupiedBySide(protoPosX1,protoPosY,adverseSide)
+      &&protoPosY<8&&protoPosY>=0&&protoPosX1<8&&protoPosX1>=0){
+        possibleMoves.push([protoPosX1,protoPosY])
+      }
+      //check protoPos2
+      if(this.occupiedBySide(protoPosX2,protoPosY,adverseSide)
+      &&protoPosY<8&&protoPosY>=0&&protoPosX2<8&&protoPosX2>=0){
+        possibleMoves.push([protoPosX2,protoPosY])
+      }
     }
     //rooks
     else if (type==4) {
@@ -265,13 +284,13 @@ class Board {
         if(myPiece.side=="B"){//high Y value
           yVal="7"
         }
-        if(this.this.layout["7"+yVal]!=""){
+        if(this.layout["7"+yVal]!=""){
           //check that the rook is GTG
           let rook=this.idLookup[this.layout["7"+yVal]]
           if(rook.type==4&&!rook.moved){//if it has not moved it must be of the same side
             //check if the necissary squares are free
-            if(this.idLookup["5"+yVal]==""&&this.idLookup["6"+yVal]){
-              possibleMoves.push([6,yVal])
+            if(this.layout["5"+yVal]==""&&this.layout["6"+yVal]==""){
+              possibleMoves.push([6,yVal-0])
             }
           }
         }
@@ -280,10 +299,7 @@ class Board {
     return possibleMoves
   }
 
-  //gets all possible moves for a side
-  getPossibleMovesPerSide(side){
-    //iterate over peiceIDs
-  }
+
   //takes a peice ID and a new position
   //returns true if move is legal
   //newPos is given as a two digit string
@@ -309,33 +325,56 @@ class Board {
     if(!this.checkMove(id,newPos)){
       return false//illegal move
     }
+    // find old pos
+    let oldPos=this.idLookup[id].posX.toString()//as string
+    oldPos+=this.idLookup[id].posY.toString()
+
     //legal move
     //check if it is castleing
     if(this.idLookup[id].type==0){//if king
       let peice=this.idLookup[id]
-      if(!peice.moved&&newPos[0]=="6"){
+      if(!peice.moved&&newPos[0]=="6"){//if the rook has moved checkMove would have cought it
         //castleing confirmed
-        //TODO deal with that
+        //move king to correct place
+        this.layout[newPos]=id
+        let king=this.idLookup[id]
+        king.posX=newPos[0]-0
+        king.posY=newPos[1]-0
+        king.hasMoved=true
+
+        //move rook
+
+        let rook=this.idLookup[this.layout["7"+newPos[1]]]
+        this.layout["5"+newPos[1]]=rook.id
+        rook.posX=5
+        rook.posY=newPos[1]-0
+        rook.hasMoved=true
+
+        //empy where the king and rook were
+        this.layout[oldPos]=""
+        this.layout["7"+oldPos[1]]=""
 
         return true//returning here
       }
     }
     //this will only run if not castleing
     //check if destination is occupied by the enemy
-    if(this.idLookup[this.layout[newPos]].side!=this.idLookup[id].side){
-      //taking enemy
-      //make enemy dead
-      this.idLookup[this.layout[newPos]].dead=true
+    if(this.layout[newPos]!=""){
+      if(this.idLookup[this.layout[newPos]].side!=this.idLookup[id].side){
+        //taking enemy
+        //make enemy dead
+        this.idLookup[this.layout[newPos]].dead=true
+      }
     }
-    // now empy the source pos
-    let oldPos=this.idLookup[id].posX.toString()//as string
-    oldPos+=this.idLookup[id].posY.toString()
+
+    //empy old pos
     this.layout[oldPos]=""//empty
     //set newPos to id
     this.layout[newPos]=id
     //set object position
     this.idLookup[id].posX=newPos[0]-0
     this.idLookup[id].posY=newPos[1]-0
+    this.idLookup[id].hasMoved=true
     return true
   }
 }
