@@ -7,7 +7,7 @@ const Board = require('./Board.js')
 
 class Game{
   constructor(){
-    this.board=Board()
+    this.board=new Board()
     this.moveLog=[]
   }
 
@@ -24,3 +24,5 @@ class Game{
     this.board=Board()
   }
 }
+
+module.exports = Game

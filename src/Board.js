@@ -418,8 +418,8 @@ class Board {
     //set object position
     this.idLookup[id].posX=newPos[0]-0
     this.idLookup[id].posY=newPos[1]-0
-    //check if the pawn is now ready for enpassent
-    if(this.idLookup[id]
+    
+
     //check if pawn is at the end
     if(this.idLookup[id].type==5){
       //check if pawn is ready for enpassent

@@ -2,6 +2,7 @@
 
 //import board and peices
 const Game = require('./src/Game.js')
+const Board = require('./src/Board.js')
 
 const bodyParser=require("body-parser")
 
@@ -12,13 +13,13 @@ var app = express()
 app.use(bodyParser.urlencoded({extended:true}))
 
 //globals
+console.log(Game)
 let board= new Board()
-
+let game = new Game() 
 
 function setup(){
   //setup board
   console.log("Setting up board")
-  game= new Game()
   console.log("Ready!")
 }
 
