@@ -24,6 +24,7 @@ class Piece{
     this.posY=posY
     this.hasMoved=false//used for pawns and knings
     this.dead=false//used for counting points
+    this.enpassent=false//weather this piece is takeable by enpassent
   }
 
   //produces a deepcopy of itself

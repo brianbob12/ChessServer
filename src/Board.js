@@ -170,9 +170,11 @@ class Board {
       let protoPosX2=myPiece.posX-1
       let protoPosY=myPiece.posY+1
       let adverseSide="B"
+      let direction=1
       if(myPiece.side=="B"){
         protoPosY=myPiece.posY-1
         adverseSide="A"
+        direction=-1
       }
       //check each protoPos1
       if(this.occupiedBySide(protoPosX1,protoPosY,adverseSide)
@@ -183,6 +185,31 @@ class Board {
       if(this.occupiedBySide(protoPosX2,protoPosY,adverseSide)
       &&protoPosY<8&&protoPosY>=0&&protoPosX2<8&&protoPosX2>=0){
         possibleMoves.push([protoPosX2,protoPosY])
+      }
+      //check for enpassent
+      if(myPiece.posY==3||myPiece.posX==4){
+        //check for piece to the side
+        var leftPawn = false
+        var rightPawn = false
+        if(myPiece.posX>0){
+          if(this.occupiedBySide(myPiece.posX-1,myPiece.posY+direction,adverseSide)){
+            //check that the piece is a pawn 
+            leftPawn= this.idLookup[this.layout[(myPiece.posX-1).toString()+(myPiece.posY+direction).toString()]].enpassent
+          }
+        }
+        if(myPiece.posX<7){
+          if(this.occupiedBySide(myPiece.posX+1,myPiece.posY+direction,adverseSide)){
+            //check that the piece is a pawn 
+            rightPawn= this.idLookup[this.layout[(myPiece.posX-1).toString()+(myPiece.posY+direction).toString()]].enpassent
+            //note that for non-pawns enpassent will be false
+          }
+        }
+        if(rightPawn){
+          possibleMoves.push([myPiece.posX+1,myPiece.posY+direction])
+        }
+        if(leftPawn){
+          possibleMoves.push([myPiece.posX-1,myPiece.posY+direction])
+        }
       }
     }
     //rooks
@@ -391,7 +418,45 @@ class Board {
     //set object position
     this.idLookup[id].posX=newPos[0]-0
     this.idLookup[id].posY=newPos[1]-0
+    //check if the pawn is now ready for enpassent
+    if(this.idLookup[id]
+    //check if pawn is at the end
+    if(this.idLookup[id].type==5){
+      //check if pawn is ready for enpassent
+      if(newPos[0]!=oldPos[0]){
+        if(this.layout[newPos]!=""){
+          //an enpassent has been made
+          if(newPos[1]=="5"){
+            this.layout[newPos[0]+"4"]==""
+          }
+          if(newPos[1]=="2"){
+            this.layout[newPos[0]+"3"]==""
+          }
+        }
+      }
+      if(this.idLookup[id].hasMoved==false){
+        if(this.idLookup[id].side=="A"&&newPos[1]==3){
+          this.idLookup[id].enpassent=true
+        }
+        if(this.idLookup[id].side=="B"&&newPos[1]==4){
+          this.idLookup[id].enpassent=true
+        }
+      }
+      if(this.idLookup[id].side=="A"){
+        if(newPos[1]==7){
+          //convert pawn to queen
+          this.idLookup[id].type=1
+        }
+      }
+      if(this.idLookup[id].side=="B"){
+        if(newPos[1]==0){
+          //convert pawn to queen
+          this.idLookup[id].type=1
+        }
+      }                                 
+    }
     this.idLookup[id].hasMoved=true
+
     return true
   }
 
