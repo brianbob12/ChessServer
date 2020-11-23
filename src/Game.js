@@ -18,11 +18,13 @@ class Game{
       //log move
       this.moveLog.push([id,newPos])
     }
+    return out
   }
 
   resetBoard(){
     this.board=Board()
   }
+  
 }
 
 module.exports = Game

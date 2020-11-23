@@ -10,8 +10,6 @@ const Piece = require('./Piece.js')
 class Board {
   //sets up chess board as usual.
 
-
-
   constructor(){
     this.layout={}//a dictionary of locations to piece IDs
     //the botton left corner is represented by "00"
@@ -170,7 +168,7 @@ class Board {
       let protoPosX2=myPiece.posX-1
       let protoPosY=myPiece.posY+1
       let adverseSide="B"
-      let direction=1
+      direction=1
       if(myPiece.side=="B"){
         protoPosY=myPiece.posY-1
         adverseSide="A"
@@ -192,15 +190,15 @@ class Board {
         var leftPawn = false
         var rightPawn = false
         if(myPiece.posX>0){
-          if(this.occupiedBySide(myPiece.posX-1,myPiece.posY+direction,adverseSide)){
+          if(this.occupiedBySide(myPiece.posX-1,myPiece.posY,adverseSide)){
             //check that the piece is a pawn 
-            leftPawn= this.idLookup[this.layout[(myPiece.posX-1).toString()+(myPiece.posY+direction).toString()]].enpassent
+            leftPawn= this.idLookup[this.layout[(myPiece.posX-1).toString()+(myPiece.posY).toString()]].enpassent
           }
         }
         if(myPiece.posX<7){
-          if(this.occupiedBySide(myPiece.posX+1,myPiece.posY+direction,adverseSide)){
+          if(this.occupiedBySide(myPiece.posX+1,myPiece.posY,adverseSide)){
             //check that the piece is a pawn 
-            rightPawn= this.idLookup[this.layout[(myPiece.posX-1).toString()+(myPiece.posY+direction).toString()]].enpassent
+            rightPawn= this.idLookup[this.layout[(myPiece.posX-1).toString()+(myPiece.posY).toString()]].enpassent
             //note that for non-pawns enpassent will be false
           }
         }
@@ -411,6 +409,20 @@ class Board {
       }
     }
 
+    //check if pawn is ready for enpassent
+    if(this.idLookup[id].type==5){
+      if(newPos[0]!=oldPos[0]){
+        if(this.layout[newPos]==""){
+          //an enpassent has been made
+          if(newPos[1]=="5"){
+            this.layout[newPos[0]+"4"]=""
+          }
+          if(newPos[1]=="2"){
+            this.layout[newPos[0]+"3"]=""
+          }
+        }
+      }
+    }
     //empy old pos
     this.layout[oldPos]=""//empty
     //set newPos to id
@@ -422,18 +434,6 @@ class Board {
 
     //check if pawn is at the end
     if(this.idLookup[id].type==5){
-      //check if pawn is ready for enpassent
-      if(newPos[0]!=oldPos[0]){
-        if(this.layout[newPos]!=""){
-          //an enpassent has been made
-          if(newPos[1]=="5"){
-            this.layout[newPos[0]+"4"]==""
-          }
-          if(newPos[1]=="2"){
-            this.layout[newPos[0]+"3"]==""
-          }
-        }
-      }
       if(this.idLookup[id].hasMoved==false){
         if(this.idLookup[id].side=="A"&&newPos[1]==3){
           this.idLookup[id].enpassent=true
