@@ -1,5 +1,7 @@
 "use strict";
 
+const promptsync = require('prompt-sync')()
+
 //import board and peices
 const Game = require('./src/Game.js')
 const Board = require('./src/Board.js')
@@ -15,11 +17,16 @@ app.use(bodyParser.urlencoded({extended:true}))
 //globals
 console.log(Game)
 let board= new Board()
-let game = new Game() 
+let game = new Game("A","B") 
 
 function setup(){
   //setup board
   console.log("Setting up board")
+  //get input
+  let codeA = promptsync("CODE A:")
+  let codeB = promptsync("CODE B:")
+  game = new Game(codeA,codeB)
+  game.startGame(true)
   console.log("Ready!")
 }
 
@@ -52,11 +59,8 @@ app.get("/verifyMove",function(req,res){
 app.get("/makeMove",function(req,res){
   console.log("Making Move")
   try{
-    let out=game.makeMove(req.query.id,req.query.newpos)
-    //// TODO: log move
-    if(!out){
-      console.log("attempt to make illegal move")
-    }
+    let out=game.makeMove(req.query.id,req.query.newpos,req.query.code)//this is a string
+    console.log(out)
     res.write(out.toString())
     res.end()
   }
